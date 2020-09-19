@@ -10,34 +10,46 @@ import json
             - CPU stats - Average system load - Average load percpu
         '''
 
-
-def format_data(values):
+#If I can write this correctly, then I'll probably be able to 
+#Reuse it for these nested values...
+def format_data(legal_actions):
 
     #We'll do it ugly, and then we'll do it less ugly
-    for value in values:
-        print(values[value])
-        print(type(values[value]))
+    return_dict = {}
+    for value in legal_actions:
+        print(legal_actions[value])
+        print(type(legal_actions[value]))
         print('---------------------------------------------')
 
-        value_type = type(values[value])
-        return_dict = {
-            'cpu': {},
-            'ram': {},
-            'disk': {},
-            'temps': {},
-            'fans': {}
-        }
+        value_type = type(legal_actions[value])
 
-        #our only tuple is cpu_load_avg
-        if value_type == tuple:
-            for sub_value in values[value]:
+        #We return a ton of different types when we ask for this stuff.
+        #We need to filter by type so we can get something useful out of here.
+        if value_type == int:
+            return_dict[value] = legal_actions[value]
+        elif value_type == list:
+            if type(legal_actions[value][0]) == float:
+                return_dict[value] = legal_actions[value]
+            else:
+                format_data(legal_actions[value])
+        elif value_type == tuple:
+            #our only tuple is cpu_load_avg
+            value_array = []
+            for sub_value in legal_actions[value]:
                 print(sub_value)
                 print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                value_array.append(sub_value)
+            return_dict[value] = value_array
+        elif value_type == dict:
+            format_data(legal_actions[value])
+
+    print(return_dict)
+    return return_dict
 
     
 if __name__ == "__main__":
     #our values
-    values = {
+    legal_actions = {
         "cpu_freq": psutil.cpu_freq(),
         "cpu_count": psutil.cpu_count(),
         "cpu_load_avg": psutil.getloadavg(),
@@ -51,4 +63,4 @@ if __name__ == "__main__":
         "fans": psutil.sensors_fans()
     }
 
-    format_data(values)
+    format_data(legal_actions)
