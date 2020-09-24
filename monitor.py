@@ -10,6 +10,10 @@ import json
             - CPU stats - Average system load - Average load percpu
         '''
 
+def format_lists(list):
+    print(list, '00000000000000000 -------------------- 00000000000000000')
+    return list
+
 #If I can write this correctly, then I'll probably be able to 
 #Reuse it for these nested values...
 def format_data(legal_actions):
@@ -17,7 +21,7 @@ def format_data(legal_actions):
     #We'll do it ugly, and then we'll do it less ugly
     return_dict = {}
     for value in legal_actions:
-        print(legal_actions[value])
+        print(legal_actions)
         print(type(legal_actions[value]))
         print('---------------------------------------------')
 
@@ -31,13 +35,11 @@ def format_data(legal_actions):
             if type(legal_actions[value][0]) == float:
                 return_dict[value] = legal_actions[value]
             else:
-                format_data(legal_actions[value])
+                format_lists(legal_actions[value])
         elif value_type == tuple:
             #our only tuple is cpu_load_avg
             value_array = []
             for sub_value in legal_actions[value]:
-                print(sub_value)
-                print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 value_array.append(sub_value)
             return_dict[value] = value_array
         elif value_type == dict:
