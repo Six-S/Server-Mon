@@ -10,9 +10,20 @@ import json
             - CPU stats - Average system load - Average load percpu
         '''
 
-def format_lists(list):
-    print(list, '00000000000000000 -------------------- 00000000000000000')
-    return list
+# Shitty way to make this happen. We just need to remove the value out of the list.
+#Way overcomplicated.
+def format_lists(list_to_format):
+    list_var = format_tuples(list_to_format[0])
+    return list_var
+
+#We have tuples, and custom types that are basically just tuples. 
+#Get the information out of them and into a list (along with everything else)
+#so that we can ingest it later.
+def format_tuples(list_to_format):
+    value_array = []
+    for sub_value in list_to_format:
+        value_array.append(sub_value)
+    return value_array
 
 #If I can write this correctly, then I'll probably be able to 
 #Reuse it for these nested values...
@@ -21,11 +32,11 @@ def format_data(legal_actions):
     #We'll do it ugly, and then we'll do it less ugly
     return_dict = {}
     for value in legal_actions:
-        print(legal_actions)
-        print(type(legal_actions[value]))
-        print('---------------------------------------------')
 
         value_type = type(legal_actions[value])
+        #A bit of a weird approach, but we have all of these custom types that are basically tuples....
+        #So treat them as such.
+        tuples = [ tuple, psutil._common.scpufreq, psutil._pslinux.svmem, psutil._common.sswap, psutil._pslinux.sdiskio ]
 
         #We return a ton of different types when we ask for this stuff.
         #We need to filter by type so we can get something useful out of here.
@@ -35,20 +46,17 @@ def format_data(legal_actions):
             if type(legal_actions[value][0]) == float:
                 return_dict[value] = legal_actions[value]
             else:
-                format_lists(legal_actions[value])
-        elif value_type == tuple:
-            #our only tuple is cpu_load_avg
-            value_array = []
-            for sub_value in legal_actions[value]:
-                value_array.append(sub_value)
-            return_dict[value] = value_array
+                return_dict[value] = format_lists(legal_actions[value])
         elif value_type == dict:
-            format_data(legal_actions[value])
+            return_dict[value] = format_data(legal_actions[value])
+        elif value_type in tuples: 
+            return_dict[value] = format_tuples(legal_actions[value])
+        else:
+            raise ValueError('[[ERR] monitor.format_data] Unknown value type of:', value_type)
 
     print(return_dict)
     return return_dict
 
-    
 if __name__ == "__main__":
     #our values
     legal_actions = {
