@@ -8,6 +8,25 @@ import time
             - CPU stats - Average system load - Average load percpu
         '''
 
+
+#TODO:
+#BRENNAN YOU NEED TO COMPLETELY REWRITE THIS LOL
+#THIS NEEDS TO BE TOTALLY REFACTORED IN A WAY THAT BETTER SUPPORTS
+#THE "HISTORY" ASPECT.
+#OR MAYBE IT DOESN'T, BUT THEN WE ARE GOING TO NEED TO BASICALLY
+#COMPLETELY REFORMAT THE DATA IN THE VIEW CLASS WHEN WE WANT TO ACTUALLY SHOW IT
+#ALSO WHAT COULD POSSIBLY TAKE ADVANTAGE OF THE DATA IN ITS CURRENT FORMAT??
+# 
+#What we need:
+# { "results": {
+        #Over time.
+#       "cpu_freq_core_1": {1.08, 2.20, 1.00, 1.00}
+#       "cpu_freq_core_2": {1.08, 2.20, 1.00, 1.00}
+#       "cpu_freq_core_3": {1.08, 2.20, 1.00, 1.00}
+#       etc etc...
+#       "timestamps": {'1602364444.3047254', '1602364444.3047254', '1602364444.3047254'}
+# }}
+
 # Shitty way to make this happen. We just need to remove the value out of the list.
 #Way overcomplicated.
 def format_lists(list_to_format):
