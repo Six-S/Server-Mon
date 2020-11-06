@@ -1,7 +1,5 @@
 import psutil
-import os
-import sys
-import json
+import time
 
 '''
         What we want to collect:
@@ -40,7 +38,7 @@ def format_data(legal_actions):
 
         #We return a ton of different types when we ask for this stuff.
         #We need to filter by type so we can get something useful out of here.
-        if value_type == int:
+        if value_type == int or value_type == float:
             return_dict[value] = legal_actions[value]
         elif value_type == list:
             if type(legal_actions[value][0]) == float:
@@ -54,10 +52,9 @@ def format_data(legal_actions):
         else:
             raise ValueError('[[ERR] monitor.format_data] Unknown value type of:', value_type)
 
-    print(return_dict)
     return return_dict
 
-if __name__ == "__main__":
+def fetch_data():
     #our values
     legal_actions = {
         "cpu_freq": psutil.cpu_freq(),
@@ -70,7 +67,8 @@ if __name__ == "__main__":
         "disk_partitions": psutil.disk_partitions(),
         "disk_io_counters": psutil.disk_io_counters(),
         "temps": psutil.sensors_temperatures(fahrenheit=True),
-        "fans": psutil.sensors_fans()
+        "fans": psutil.sensors_fans(),
+        "timestamp": time.time()
     }
 
-    format_data(legal_actions)
+    return format_data(legal_actions)
